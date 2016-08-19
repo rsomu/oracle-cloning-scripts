@@ -5,6 +5,17 @@
 #
 # Purpose: Script for creating a clone of an Oracle DB on secondary server
 # Works for single instance Oracle on filesystem on Linux
+#
+#*******************************************************************************
+# Prerequisites:
+# 1. The target volumes should have been discovered and mounted to target server
+# 2. Target server to have the same Oracle binaries installed as that of source
+# 3. Copy the init.ora file from source and make changes so it reflect target
+# 4. Update the "puresnap" function with relevant volume information
+#
+# Note: Cloned database will have the same DB name as that of source, hence
+# run this script on a secondary host and not on the source.
+#
 #*******Disclaimer:*************************************************************
 # This script is offered "as is" with no warranty.  While this script is
 # tested and worked in my environment, it is recommended that you test
