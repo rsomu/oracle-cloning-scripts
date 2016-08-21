@@ -68,9 +68,9 @@ function puresnap() {
 SUFFIX=`date +%s`
 ssh ${User}@${Array} purepgroup snap --suffix DM1-$SUFFIX ${SrcPG}
 echo "Copying data volume snapshot onto cloned data volume"
-ssh ${User}@${Array} purevol copy --force ${SrcPG}.-$SUFFIX.source_data_volume target_data_volume
+ssh ${User}@${Array} purevol copy --force ${SrcPG}.DM1-$SUFFIX.source_data_volume target_data_volume
 echo "Copying redo volume snapshot onto cloned redo volume"
-ssh ${User}@${Array} purevol copy --force ${SrcPG}.-$SUFFIX.source_redo_volume target_redo_volume
+ssh ${User}@${Array} purevol copy --force ${SrcPG}.DM1-$SUFFIX.source_redo_volume target_redo_volume
 
 # If you have more volumes, make sure to include them above in the same format
 }
