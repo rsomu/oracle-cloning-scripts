@@ -3,9 +3,6 @@
 # For educational purposes only - no warranty is provided
 # Test thoroughly - use at your own risk
 #
-# Please check the output of the script, verify if the volumes to be overwritten
-# are correct before enabling the copy
-#
 # Script: repSnap.sh
 # Author: Somu Rajarathinam
 # Date: 07/21/2016
