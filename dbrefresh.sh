@@ -123,60 +123,6 @@ fi
 
 db=${1^^}  # Convert to upper case
 
-somu--MacBookPro15:PAWS somu$ vi dbrefresh.sh
-somu--MacBookPro15:PAWS somu$ more dbrefresh.sh
-#*******************************************************************************
-# Script: dbrefresh.sh
-# Author: Somu Rajarathinam (somu)
-# Date  : 2019-08-07
-#
-# Purpose: Script for creating/refreshing a clone of an Oracle DB (Dev/QA/Stg)
-#          using Pure FlashArray snapshot of the Oracle Standby database
-#
-#*******************************************************************************
-# Prerequisites/Assumptions:
-# 1. The protection group consists of two volumes, data and fra
-# 2. The target volumes are mounted under /db/<dev|qa|stg>/<mount> directory
-#    <mount> directory should be the same as the source standby volume mount points
-#    In this example the source standby volumes are mounted under /p02 and /p03
-#    Hence the target volumes for DEV would be /db/dev/p02 and /db/dev/p03
-# 3. The target volumes should have been discovered and mounted to target server
-# 4. Target server to have the same Oracle binaries installed as that of source
-# 5. Copy the init.ora file from source and make changes so it reflect target
-# 6. Standby database includes 3 standby redo logs
-#
-#
-#*******Disclaimer:*************************************************************
-# This script is offered "as is" with no warranty.  While this script is
-# tested and worked in my environment, it is recommended that you test
-# this script in a test lab before using in a production environment.
-# No written permission needed to use this script but me or Pure Storage
-# will not be liable for any damage or loss to the system.
-#*******************************************************************************
-#
-# Usage: dbrefresh.sh [dev|qa|stg] <pg> <snap suffix>
-#
-#
-
-export SDIR=/home/oracle/demo
-cd $SDIR
-
-if [ $# -ne 3 ]; then
-  echo "Usage: ${0} [dev|qa|stg] <pg> <snap suffix>"
-  exit -1
-fi
-
-export ORACLE_SID=$1
-ct=$(ps -ef|grep smon|grep $1|grep -v grep)
-if [ "${#ct}" -gt 0 ]; then
-   sqlplus -s / as sysdba << EOF
-   shutdown abort;
-   exit
-EOF
-fi
-
-db=${1^^}  # Convert to upper case
-
 case $db in
 
   DEV)  echo "Cloning DEV instance"
