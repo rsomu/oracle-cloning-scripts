@@ -32,77 +32,7 @@
 # Usage: dbrefresh.sh [dev|qa|stg] <pg> <snap suffix>
 #
 #
-
-export SDIR=/home/oracle/demo
-cd $SDIR
-
-if [ $# -ne 3 ]; then
-  echo "Usage: ${0} [dev|qa|stg] <pg> <snap suffix>"
-  exit -1
-fi
-
-export ORACLE_SID=$1
-ct=$(ps -ef|grep smon|grep $1|grep -v grep)
-if [ "${#ct}" -gt 0 ]; then
-   sqlplus -s / as sysdba << EOF
-   shutdown abort;
-   exit
-EOF
-   exit
-EOF
-fi
-
-db=${1^^}  # Convert to upper case
-
-case $db in
-
-  DEV)  echo "Cloning DEV instance"
-        if grep -qs "/db/dev/p0[23]" /proc/mounts; then
-           sudo umount /db/$1/p02
-           sudo umount /db/$1/p03
-        fi
-        $SDIR/pureclone.py --array 10.0.2.87 --srcPG $2 --tgtVols fs_target_devdata,fs_target_devfra --suffix $3
-        ;;
-   QA)  echo "Cloning QA instance"
-        if grep -qs "/db/qa/p0[23]" /proc/mounts; then
-           sudo umount /db/$1/p02
-           sudo umount /db/$1/p03
-        fi
-        $SDIR/pureclone.py --array 10.0.2.87 --srcPG $2 --tgtVols fs_target_qadata,fs_target_qafra --suffix $3
-        ;;
-  STG)  echo "Cloning STG instance"
-        if grep -qs "/db/stg/p0[23]" /proc/mounts; then
-           sudo umount /db/$1/p02
-        if grep -qs "/db/stg/p0[23]" /proc/mounts; then
-           sudo umount /db/$1/p02
-           sudo umount /db/$1/p03
-        fi
-        $SDIR/pureclone.py --array 10.0.2.87 --srcPG $2 --tgtVols fs_target_stgdata,fs_target_stgfra --suffix $3
-        ;;
-    *)  echo "Incorrect instance type"
-        exit -1
-esac
-
-# Mount the filesystems
-
-sudo mount /db/$1/p02
-sudo mount /db/$1/p03
-
-# Rename the directories
-mv /db/$1/p02/oradata/prod_sby /db/$1/p02/oradata/$1
-mv /db/$1/p03/fra/prod_sby /db/$1/p03/fra/$1
-mv /db/$1/p03/fra/PROD_SBY /db/$1/p03/fra/${1^^}
-
-# Setup symbolic link to Standby database
-rm -f /p02/oradata/prod_sby/sby*.log
-ln -s /db/$1/p02/oradata/$1/sby_redo01.log /p02/oradata/prod_sby/sby_redo01.log
-ln -s /db/$1/p02/oradata/$1/sby_redo02.log /p02/oradata/prod_sby/sby_redo02.log
-ln -s /db/$1/p02/oradata/$1/sby_redo03.log /p02/oradata/prod_sby/sby_redo03.log
-
-# dbrefresh.sh [dev|qa|stg] <pg> <snap suffix>
-#
 # PG consists of two volumes, data and fra
-#
 
 export SDIR=/home/oracle/demo
 cd $SDIR
